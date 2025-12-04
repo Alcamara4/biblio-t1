@@ -244,6 +244,41 @@ INSERT INTO `libros_d` (`id_libro`, `Autor`, `Titulo`, `edicion`, `año`, `orige
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `libros_impresos`
+--
+
+CREATE TABLE `libros_impresos` (
+  `id_impreso` int(11) NOT NULL,
+  `codigo_interno` varchar(32) NOT NULL,
+  `autor` varchar(128) NOT NULL,
+  `titulo` varchar(255) NOT NULL,
+  `edicion` varchar(64) DEFAULT NULL,
+  `anio_publicacion` varchar(10) DEFAULT NULL,
+  `origen` varchar(32) DEFAULT NULL,
+  `tipo` varchar(32) DEFAULT 'Libro',
+  `area` varchar(64) DEFAULT NULL,
+  `materia` varchar(64) DEFAULT NULL,
+  `comentario` varchar(255) DEFAULT NULL,
+  `ubicacion` varchar(64) DEFAULT NULL,
+  `stock_total` int(11) NOT NULL DEFAULT '0',
+  `stock_disponible` int(11) NOT NULL DEFAULT '0',
+  `estado` varchar(16) NOT NULL DEFAULT 'activo',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `libros_impresos`
+--
+
+INSERT INTO `libros_impresos` (`id_impreso`, `codigo_interno`, `autor`, `titulo`, `edicion`, `anio_publicacion`, `origen`, `tipo`, `area`, `materia`, `comentario`, `ubicacion`, `stock_total`, `stock_disponible`, `estado`, `created_at`, `updated_at`) VALUES
+(1, 'IMP-0001', 'Julio Cortázar', 'Rayuela', 'Primera', '1963', 'Argentina', 'Libro', 'Literatura', 'Lengua', 'Ejemplar donado', 'Estantería A1', 3, 2, 'activo', CURRENT_TIMESTAMP, NULL),
+(2, 'IMP-0002', 'Liliana Bodoc', 'La saga de los confines', 'Tercera', '2002', 'Argentina', 'Libro', 'Literatura', 'Lengua', 'Colección juvenil', 'Estantería B4', 5, 5, 'activo', CURRENT_TIMESTAMP, NULL),
+(3, 'IMP-0003', 'Stephen Hawking', 'Breve historia del tiempo', 'Octava', '1988', 'Reino Unido', 'Libro', 'Ciencia', 'Física', 'Copias para laboratorio', 'Depósito', 2, 1, 'activo', CURRENT_TIMESTAMP, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `log_user`
 --
 
@@ -370,6 +405,32 @@ INSERT INTO `log_user` (`id_log`, `id_usuario`, `fecha`, `hora`, `ip`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `prestamos_material`
+--
+
+CREATE TABLE `prestamos_material` (
+  `id_prestamo` int(11) NOT NULL,
+  `id_libro_impreso` int(11) NOT NULL,
+  `id_persona` int(11) NOT NULL,
+  `fecha_prestamo` date NOT NULL,
+  `fecha_vencimiento` date NOT NULL,
+  `fecha_devolucion` date DEFAULT NULL,
+  `estado` varchar(16) NOT NULL DEFAULT 'prestado',
+  `observaciones` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `prestamos_material`
+--
+
+INSERT INTO `prestamos_material` (`id_prestamo`, `id_libro_impreso`, `id_persona`, `fecha_prestamo`, `fecha_vencimiento`, `fecha_devolucion`, `estado`, `observaciones`, `created_at`, `updated_at`) VALUES
+(1, 1, 150, '2025-11-01', '2025-11-15', NULL, 'prestado', 'Ejemplar reservado para sala de lectura', CURRENT_TIMESTAMP, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `personas`
 --
 
@@ -456,10 +517,25 @@ ALTER TABLE `libros_d`
   ADD PRIMARY KEY (`id_libro`);
 
 --
+-- Indices de la tabla `libros_impresos`
+--
+ALTER TABLE `libros_impresos`
+  ADD PRIMARY KEY (`id_impreso`),
+  ADD UNIQUE KEY `codigo_interno` (`codigo_interno`);
+
+--
 -- Indices de la tabla `log_user`
 --
 ALTER TABLE `log_user`
   ADD PRIMARY KEY (`id_log`);
+
+--
+-- Indices de la tabla `prestamos_material`
+--
+ALTER TABLE `prestamos_material`
+  ADD PRIMARY KEY (`id_prestamo`),
+  ADD KEY `fk_prestamo_libro` (`id_libro_impreso`),
+  ADD KEY `fk_prestamo_persona` (`id_persona`);
 
 --
 -- Indices de la tabla `personas`
@@ -498,11 +574,23 @@ ALTER TABLE `estudiante`
 --
 ALTER TABLE `libros_d`
   MODIFY `id_libro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+
+--
+-- AUTO_INCREMENT de la tabla `libros_impresos`
+--
+ALTER TABLE `libros_impresos`
+  MODIFY `id_impreso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `log_user`
 --
 ALTER TABLE `log_user`
   MODIFY `id_log` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+
+--
+-- AUTO_INCREMENT de la tabla `prestamos_material`
+--
+ALTER TABLE `prestamos_material`
+  MODIFY `id_prestamo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `personas`
 --
@@ -513,6 +601,17 @@ ALTER TABLE `personas`
 --
 ALTER TABLE `roles`
   MODIFY `id_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `prestamos_material`
+--
+ALTER TABLE `prestamos_material`
+  ADD CONSTRAINT `fk_prestamo_libro` FOREIGN KEY (`id_libro_impreso`) REFERENCES `libros_impresos` (`id_impreso`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_prestamo_persona` FOREIGN KEY (`id_persona`) REFERENCES `personas` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
