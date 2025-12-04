@@ -120,12 +120,13 @@ $( "#tit_Materia" ).autocomplete({
    $(div).load(desde);
    }  
    
-function cargar_pdf(div,desde){
+function cargar_pdf(div,desde,tipo){
    var ruta="libros_d/"+desde;
+   var tipoRecurso = tipo || '';
    $.ajax({
         type: "POST",
         url: "ver_pdf.php",
-        data: {archivo: ruta}
+        data: {archivo: ruta, tipo: tipoRecurso}
     }).done(function (html) {
         $(div).html(html);
     });
