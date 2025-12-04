@@ -3,8 +3,16 @@ include("menu_bs.php");
 
 include_once("libreria/carteles.php");
 
+$soloAyuda = isset($_GET['ayuda']);
+$tituloCartelera = $soloAyuda ? 'Cartelera de Ayuda' : 'Cartelera';
 
-$cats=Cartel::categorias();
+if ($soloAyuda) {
+    $cats = array(array('categoria' => 'Ayuda'));
+} else {
+    $cats = array_values(array_filter(Cartel::categorias(), function ($cat) {
+        return strcasecmp($cat['categoria'], 'Ayuda') !== 0;
+    }));
+}
 
 
 echo '
@@ -16,7 +24,7 @@ echo '
   <div id="capa_d">
  
 	  <H3>BIBLIOTECA T1</H3>
-	  <H4>Cartelera</H4>
+	  <H4>'.$tituloCartelera.'</H4>
 	  <ul class="nav nav-pills nav-stacked">';
 
 foreach($cats as $cat){
@@ -37,5 +45,9 @@ echo '<li><a href="#"><span onclick="cargar(\'#capa_C\',\'mostrar_cartelera.php?
 	 
  </div>
 ';
+
+if ($soloAyuda) {
+    echo "<script>cargar('#capa_C','mostrar_cartelera.php?b=Ayuda');</script>";
+}
 ?>
 
