@@ -42,9 +42,7 @@ if (isset($lib)){
 		 else{
 		 echo '<td><button class="btn btn-primary btn-xs" onclick="ver_info(' . $libros['id_libro'] . ')" >Info</button></td>';
 		 }
-		 $archivo_js = addslashes($file_l);
-		 $tipo_js = addslashes($libros['tipo']);
-		 echo '<td><button class="btn btn-primary btn-xs" onclick="cargar_pdf(\'#capa_d\',\'' . $archivo_js . '\',\'' . $tipo_js . '\')" >Vista previa</button></td>';
+		 echo '<td><button class="btn btn-primary btn-xs" onclick="cargar_pdf(\'#capa_d\',\'' .$file_l . '\')" >Min</button></td>';
          
 		  echo " </tr> ";
 		   }
